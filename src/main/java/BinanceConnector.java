@@ -17,7 +17,7 @@ import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
 
 
-public class GetData{
+public class BinanceConnector {
 
     public static void main (String[] args) {
 //        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(
@@ -34,6 +34,17 @@ public class GetData{
         List<OrderBookEntry> asks = orderBook.getAsks();
         OrderBookEntry firstAskEntry = asks.get(0);
         System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
+    }
+
+    public OrderBook getOrderBook(String symbol) {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("API-KEY", "SECRET");
+        BinanceApiRestClient client = factory.newRestClient();
+
+        OrderBook orderBook = client.getOrderBook(symbol, 10);
+        List<OrderBookEntry> asks = orderBook.getAsks();
+        OrderBookEntry firstAskEntry = asks.get(0);
+        System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
+        return orderBook;
     }
 
     public static void printLatestPrice(BinanceApiRestClient client) {

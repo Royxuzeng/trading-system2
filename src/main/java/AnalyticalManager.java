@@ -19,5 +19,9 @@ public class AnalyticalManager implements EventListener{
     public static void main(String args[]) {
         Scanner scanner = new Scanner(System.in);
         String symbol = scanner.next();
+
+        MarketDataManager marketDataManager = new MarketDataManager();
+
+
     }
 }

@@ -11,7 +11,11 @@ public class EventManager {
     }
 
     public void publish(OrderBook orderBook) {
-
+        for (EventListener listener: eventListenerList) {
+            if (listener instanceof AnalyticalManager) {
+                listener.handleEvent(orderBook);
+            }
+        }
     }
 
     public void publish(ScheduleEvent timer) {
