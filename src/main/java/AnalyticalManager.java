@@ -21,7 +21,9 @@ public class AnalyticalManager implements EventListener{
         String symbol = scanner.next();
 
         MarketDataManager marketDataManager = new MarketDataManager();
+        SchedulerManager schedulerManager = new SchedulerManager();
 
-
+        marketDataManager.subscribeOrderBook(symbol);
+        schedulerManager.periodicCallBack(500);
     }
 }
