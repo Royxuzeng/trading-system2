@@ -3,10 +3,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
+
+import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.event.DepthEvent;
 import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
 import com.binance.api.client.domain.market.TickerPrice;
@@ -16,9 +21,14 @@ import com.binance.api.client.domain.market.TickerStatistics;
 public class BinanceConnector {
     private BinanceApiRestClient client;
 
-    private long orderBookLastUpdateId;
+    private static final String BIDS = "BIDS";
+    private static final String ASKS = "ASKS";
 
-    private Source.OrderBook orderBookCache;
+    private long lastUpdateId;
+
+    private final WsCallback wsCallback = new WsCallback();
+
+    private Source.OrderBook orderBookCache = new Source.OrderBook();
 
     public BinanceConnector(String symbol) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
@@ -34,8 +44,7 @@ public class BinanceConnector {
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
-        this.orderBookCache = new Source.OrderBook();
-        this.orderBookLastUpdateId = orderBook.getLastUpdateId();
+        this.lastUpdateId = orderBook.getLastUpdateId();
 
         NavigableMap<BigDecimal, BigDecimal> asks = new TreeMap<>(Comparator.reverseOrder());
         for (OrderBookEntry ask : orderBook.getAsks()) {
@@ -48,6 +57,42 @@ public class BinanceConnector {
             bids.put(new BigDecimal(bid.getPrice()), new BigDecimal(bid.getQty()));
         }
         orderBookCache.put("BIDS", bids);
+    }
+
+    private void applyPendingDeltas(final List<DepthEvent> pendingDeltas) {
+        final Consumer<DepthEvent> updateOrderBook = newEvent -> {
+            if (newEvent.getFinalUpdateId() > lastUpdateId) {
+                System.out.println(newEvent);
+                lastUpdateId = newEvent.getFinalUpdateId();
+                updateOrderBook(getAsks(), newEvent.getAsks());
+                updateOrderBook(getBids(), newEvent.getBids());
+                printDepthCache();
+            }
+        };
+
+        final Consumer<DepthEvent> drainPending = newEvent -> {
+            pendingDeltas.add(newEvent);
+
+            // 3. Apply any deltas received on the web socket that have an update-id indicating they come
+            // after the snapshot.
+            pendingDeltas.stream()
+                    .filter(
+                            e -> e.getFinalUpdateId() > lastUpdateId) // Ignore any updates before the snapshot
+                    .forEach(updateOrderBook);
+
+            // 4. Start applying any newly received depth events to the depth cache.
+            wsCallback.setHandler(updateOrderBook);
+        };
+
+        wsCallback.setHandler(drainPending);
+    }
+
+    public NavigableMap<BigDecimal, BigDecimal> getAsks() {
+        return orderBookCache.orderBook.get(ASKS);
+    }
+
+    public NavigableMap<BigDecimal, BigDecimal> getBids() {
+        return orderBookCache.orderBook.get(BIDS);
     }
 
     public static void main (String[] args) {
@@ -72,8 +117,8 @@ public class BinanceConnector {
         BinanceApiWebSocketClient client = factory.newWebSocketClient();
 
         client.onDepthEvent(symbol.toLowerCase(), response -> {
-            if (response.getFinalUpdateId() > orderBookLastUpdateId) {
-                orderBookLastUpdateId = response.getFinalUpdateId();
+            if (response.getFinalUpdateId() > lastUpdateId) {
+                lastUpdateId = response.getFinalUpdateId();
                 updateOrderBook(orderBookCache.getAsks(), response.getAsks());
                 updateOrderBook(orderBookCache.getBids(), response.getBids());
 
@@ -110,5 +155,30 @@ public class BinanceConnector {
         System.out.println(allPrices);
     }
 
+    private final class WsCallback implements BinanceApiCallback<DepthEvent> {
+
+        private final AtomicReference<Consumer<DepthEvent>> handler = new AtomicReference<>();
+
+        @Override
+        public void onResponse(DepthEvent depthEvent) {
+            try {
+                handler.get().accept(depthEvent);
+            } catch (final Exception e) {
+                System.err.println("Exception caught processing depth event");
+                e.printStackTrace(System.err);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable cause) {
+            System.out.println("WS connection failed. Reconnecting. cause:" + cause.getMessage());
+
+            initialize();
+        }
+
+        private void setHandler(final Consumer<DepthEvent> handler) {
+            this.handler.set(handler);
+        }
+    }
 
 }
