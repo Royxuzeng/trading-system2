@@ -2,13 +2,25 @@ import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
 
 public class MarketDataManager {
-    public void subscribeOrderBook(String symbol) {
-        OrderBook orderBook = Main.binanceConnector.getOrderBook(symbol);
+    public String symbol;
+    public BinanceConnector binanceConnector;
+    public EventManager eventManager;
+
+    public MarketDataManager(String symbol, EventManager eventManager) {
+        this.symbol = symbol;
+        this.eventManager = eventManager;
+        binanceConnector = new BinanceConnector(symbol);
+    }
+
+    public void subscribeOrderBook() {
+//        OrderBook orderBook = Main.binanceConnector.getOrderBook(symbol);
 //        String price = orderBookEntry.getPrice();
 //        String qty = orderBookEntry.getQty();
-        Data.orderBookList.add(orderBook);
+//        Data.orderBookList.add(orderBook);
 
-        Main.eventManager.publish(orderBook);
+//        Main.eventManager.publish(orderBook);
+
+        binanceConnector.startOrderBookEventStreaming(symbol, eventManager);
     }
 
     public void subscribeTrades(String symbol) {

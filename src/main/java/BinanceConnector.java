@@ -1,16 +1,12 @@
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
-import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.domain.account.Account;
-import com.binance.api.client.domain.account.Trade;
-import com.binance.api.client.domain.event.AggTradeEvent;
-import com.binance.api.client.domain.event.DepthEvent;
-import com.binance.api.client.domain.market.AggTrade;
-import com.binance.api.client.domain.market.Candlestick;
-import com.binance.api.client.domain.market.CandlestickInterval;
 import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
 import com.binance.api.client.domain.market.TickerPrice;
@@ -18,22 +14,45 @@ import com.binance.api.client.domain.market.TickerStatistics;
 
 
 public class BinanceConnector {
+    private BinanceApiRestClient client;
+
+    private long orderBookLastUpdateId;
+
+    private Source.OrderBook orderBookCache;
+
+    public BinanceConnector(String symbol) {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+        client = factory.newRestClient();
+        initializeOrderBookCache(symbol);
+    }
+
+    /**
+     * Initializes the depth cache by using the REST API.
+     */
+    public void initializeOrderBookCache(String symbol) {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+        BinanceApiRestClient client = factory.newRestClient();
+        OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
+
+        this.orderBookCache = new Source.OrderBook();
+        this.orderBookLastUpdateId = orderBook.getLastUpdateId();
+
+        NavigableMap<BigDecimal, BigDecimal> asks = new TreeMap<>(Comparator.reverseOrder());
+        for (OrderBookEntry ask : orderBook.getAsks()) {
+            asks.put(new BigDecimal(ask.getPrice()), new BigDecimal(ask.getQty()));
+        }
+        orderBookCache.put("ASKS", asks);
+
+        NavigableMap<BigDecimal, BigDecimal> bids = new TreeMap<>(Comparator.reverseOrder());
+        for (OrderBookEntry bid : orderBook.getBids()) {
+            bids.put(new BigDecimal(bid.getPrice()), new BigDecimal(bid.getQty()));
+        }
+        orderBookCache.put("BIDS", bids);
+    }
 
     public static void main (String[] args) {
-//        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(
-//                "fybfJOTBNTMbPEbhKd9CibhYDFgwmhaee8eyhqJZTEo9J9UwIXmIUJFqtppRGZCt",
-//                "ZR5Jtu0dMpGvIFDcoLmboJXmn083uNWVtnw8gMDUDLX378W9GblRIMCT5brlzwwt");
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("API-KEY", "SECRET");
-        BinanceApiRestClient client = factory.newRestClient();
-//        BinanceApiAsyncRestClient client1 = factory.newAsyncRestClient();
+        BinanceApiWebSocketClient client = BinanceApiClientFactory.newInstance().newWebSocketClient();
 
-//        Account account = client.getAccount();
-//        System.out.println(account.getBalances());
-//        System.out.println(account.getAssetBalance("ETH").getFree());
-        OrderBook orderBook = client.getOrderBook("NEOETH", 10);
-        List<OrderBookEntry> asks = orderBook.getAsks();
-        OrderBookEntry firstAskEntry = asks.get(0);
-        System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
     }
 
     public OrderBook getOrderBook(String symbol) {
@@ -46,6 +65,39 @@ public class BinanceConnector {
         System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
 
         return orderBook;
+    }
+
+    public void startOrderBookEventStreaming(String symbol, EventManager eventManager) {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+        BinanceApiWebSocketClient client = factory.newWebSocketClient();
+
+        client.onDepthEvent(symbol.toLowerCase(), response -> {
+            if (response.getFinalUpdateId() > orderBookLastUpdateId) {
+                orderBookLastUpdateId = response.getFinalUpdateId();
+                updateOrderBook(orderBookCache.getAsks(), response.getAsks());
+                updateOrderBook(orderBookCache.getBids(), response.getBids());
+
+                try {
+                    eventManager.publish(orderBookCache);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void updateOrderBook(NavigableMap<BigDecimal,
+            BigDecimal> lastOrderBookEntries, List<OrderBookEntry> orderBookDeltas) {
+        for (OrderBookEntry orderBookDelta : orderBookDeltas) {
+            BigDecimal price = new BigDecimal(orderBookDelta.getPrice());
+            BigDecimal qty = new BigDecimal(orderBookDelta.getQty());
+            if (qty.compareTo(BigDecimal.ZERO) == 0) {
+                // qty=0 means remove this level
+                lastOrderBookEntries.remove(price);
+            } else {
+                lastOrderBookEntries.put(price, qty);
+            }
+        }
     }
 
     public static void printLatestPrice(BinanceApiRestClient client) {
