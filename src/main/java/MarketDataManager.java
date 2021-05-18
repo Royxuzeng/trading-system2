@@ -20,7 +20,7 @@ public class MarketDataManager {
 
 //        Main.eventManager.publish(orderBook);
 
-        binanceConnector.startOrderBookEventStreaming(symbol, eventManager);
+        binanceConnector.startDepthEventStreaming(symbol);
     }
 
     public void subscribeTrades(String symbol) {
