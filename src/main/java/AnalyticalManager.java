@@ -8,7 +8,7 @@ import com.binance.api.client.domain.market.OrderBook;
 public class AnalyticalManager implements EventListener{
     @Override
     public void handleEvent(OrderBook orderBook) {
-
+        Main.schedulerManager.periodicCallBack(500);
     }
 
     @Override

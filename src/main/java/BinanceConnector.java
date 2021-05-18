@@ -44,6 +44,7 @@ public class BinanceConnector {
         List<OrderBookEntry> asks = orderBook.getAsks();
         OrderBookEntry firstAskEntry = asks.get(0);
         System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
+
         return orderBook;
     }
 

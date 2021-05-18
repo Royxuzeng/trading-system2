@@ -23,6 +23,6 @@ public class Main {
         String symbol = scanner.next();
 
         marketDataManager.subscribeOrderBook(symbol);
-        schedulerManager.periodicCallBack(500);
+//        schedulerManager.periodicCallBack(500);
     }
 }
