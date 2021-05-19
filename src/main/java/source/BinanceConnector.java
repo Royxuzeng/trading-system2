@@ -39,9 +39,7 @@ public class BinanceConnector {
 
     public BinanceConnector(String symbol) {
         initializeDepthCache(symbol);
-//        startDepthEventStreaming(symbol);
-        initializeAggTradesCache(symbol);
-//        startAggTradesEventStreaming(symbol);
+//        initializeAggTradesCache(symbol);
     }
 
     /**

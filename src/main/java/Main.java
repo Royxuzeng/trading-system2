@@ -25,8 +25,8 @@ public class Main {
         MarketDataManager marketDataManager = new MarketDataManager("ETHBTC", eventManager);
 
         marketDataManager.subscribeOrderBook();
-        AnalyticalManager smaFive = new SimpleMovingAverage(5);
-        eventManager.addListener(smaFive);
+        AnalyticalManager analyticalManager = new SimpleMovingAverage(5);
+        eventManager.addListener(analyticalManager);
 
 
 //        marketDataManager.subscribeOrderBook(symbol);
