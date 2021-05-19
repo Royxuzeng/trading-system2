@@ -3,6 +3,7 @@ package source;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -88,6 +89,20 @@ public class BinanceConnector {
                 }
             }
         });
+    }
+
+    private void printDepthCache() {
+        System.out.println(orderBookCache);
+        System.out.println("ASKS:");
+        orderBookCache.getAsks().entrySet().forEach(entry -> System.out.println(toDepthCacheEntryString(entry)));
+        System.out.println("BIDS:");
+        orderBookCache.getBids().entrySet().forEach(entry -> System.out.println(toDepthCacheEntryString(entry)));
+        System.out.println("BEST ASK: " + toDepthCacheEntryString(orderBookCache.getBestAsk()));
+        System.out.println("BEST BID: " + toDepthCacheEntryString(orderBookCache.getBestBid()));
+    }
+
+    private static String toDepthCacheEntryString(Map.Entry<BigDecimal, BigDecimal> depthCacheEntry) {
+        return depthCacheEntry.getKey().toPlainString() + " / " + depthCacheEntry.getValue();
     }
 
     private void updateOrderBook(NavigableMap<BigDecimal,

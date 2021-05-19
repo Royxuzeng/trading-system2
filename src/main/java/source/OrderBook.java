@@ -23,14 +23,14 @@ public class OrderBook {
     /**
      * @return the best ask in the order book
      */
-    private Map.Entry<BigDecimal, BigDecimal> getBestAsk() {
+    public Map.Entry<BigDecimal, BigDecimal> getBestAsk() {
         return getAsks().lastEntry();
     }
 
     /**
      * @return the best bid in the order book
      */
-    private Map.Entry<BigDecimal, BigDecimal> getBestBid() {
+    public Map.Entry<BigDecimal, BigDecimal> getBestBid() {
         return getBids().firstEntry();
     }
 
