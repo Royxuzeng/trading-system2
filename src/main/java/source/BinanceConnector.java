@@ -14,6 +14,7 @@ import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
 import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
+import com.binance.api.client.impl.BinanceApiServiceGenerator;
 
 import messaging.EventManager;
 
@@ -82,6 +83,7 @@ public class BinanceConnector {
                 updateOrderBook(orderBookCache.getAsks(), response.getAsks());
                 updateOrderBook(orderBookCache.getBids(), response.getBids());
 
+                printDepthCache();
                 try {
                     eventManager.publish(orderBookCache);
                 } catch (InterruptedException e) {
