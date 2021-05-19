@@ -1,5 +1,7 @@
-import com.binance.api.client.domain.market.OrderBook;
-import com.binance.api.client.domain.market.OrderBookEntry;
+package source;
+
+import messaging.EventManager;
+import source.BinanceConnector;
 
 public class MarketDataManager {
     public String symbol;

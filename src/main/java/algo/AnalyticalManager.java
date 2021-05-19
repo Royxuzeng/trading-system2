@@ -1,3 +1,5 @@
+package algo;
+
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -5,6 +7,9 @@ import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 import com.binance.api.client.domain.market.AggTrade;
 import com.binance.api.client.domain.market.OrderBook;
+
+import messaging.EventListener;
+import source.ScheduleEvent;
 
 public class AnalyticalManager implements EventListener {
     protected NavigableMap<Long, AggTrade> aggTradesCache = new TreeMap<>();
