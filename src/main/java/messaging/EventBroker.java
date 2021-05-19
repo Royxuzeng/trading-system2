@@ -1,3 +1,5 @@
+package messaging;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -5,6 +7,8 @@ import java.util.concurrent.BlockingQueue;
 
 import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.DepthEvent;
+
+import scheduling.ScheduleEvent;
 
 public class EventBroker<T> {
     private BlockingQueue<T> eventQueue = new ArrayBlockingQueue<>(1024);
@@ -18,13 +22,11 @@ public class EventBroker<T> {
         if (eventQueue.isEmpty()) {
             System.out.println("No events to broadcast.");
         } else {
-            // can change to eventQueue get method 
-            while (!eventQueue.isEmpty()) {
-                T event = eventQueue.remove();
-                sendToListeners(event);
-            }
+            T event = eventQueue.take();
+            sendToListeners(event);
         }
     }
+
 
     public void sendToListeners(T event) throws InterruptedException {
         for (EventListener listener : listenerList) {

@@ -1,9 +1,13 @@
+package algo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.binance.api.client.domain.market.AggTrade;
+
+import scheduling.ScheduleEvent;
 
 public class SimpleMovingAverage extends AnalyticalManager {
     private int period;

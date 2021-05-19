@@ -1,27 +1,28 @@
-import java.util.ArrayList;
-import java.util.List;
+package messaging;
 
 import com.binance.api.client.domain.market.AggTrade;
-import com.binance.api.client.domain.market.OrderBook;
+
+import scheduling.ScheduleEvent;
+import source.OrderBook;
 
 public class EventManager {
-    private EventBroker<Source.OrderBook> orderBookBroker = new EventBroker<>();
+    private EventBroker<OrderBook> orderBookBroker = new EventBroker<>();
     private EventBroker<ScheduleEvent> scheduleQueue = new EventBroker<>();
     private EventBroker<AggTrade>aggTradesBroker = new EventBroker<>();
 
-//    public void addListener(EventListener toAdd) {
+//    public void addListener(messaging.EventListener toAdd) {
 //        eventListenerList.add(toAdd);
 //    }
 
 //    public void publish(OrderBook orderBook) {
-//        for (EventListener listener: Main.eventListenerList) {
-//            if (listener instanceof AnalyticalManager) {
+//        for (messaging.EventListener listener: Main.eventListenerList) {
+//            if (listener instanceof algo.AnalyticalManager) {
 //                listener.handleEvent(orderBook);
 //            }
 //        }
 //    }
 
-    public void publish(Source.OrderBook orderbook) throws InterruptedException {
+    public void publish(OrderBook orderbook) throws InterruptedException {
         orderBookBroker.addEvent(orderbook);
         orderBookBroker.broadcast();
     }

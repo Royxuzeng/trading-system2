@@ -1,9 +1,11 @@
-//import com.binance.api.client.domain.market.OrderBook;
+package messaging;//import com.binance.api.client.domain.market.OrderBook;
 
 
 import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 import com.binance.api.client.domain.market.OrderBook;
+
+import scheduling.ScheduleEvent;
 
 public interface EventListener {
     void handleEvent(ScheduleEvent timer) throws InterruptedException;

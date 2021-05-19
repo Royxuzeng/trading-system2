@@ -1,3 +1,5 @@
+package source;
+
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -12,13 +14,15 @@ import com.binance.api.client.domain.market.OrderBookEntry;
 import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
 
+import messaging.EventManager;
+
 
 public class BinanceConnector {
     private BinanceApiRestClient client;
 
     private long orderBookLastUpdateId;
 
-    private Source.OrderBook orderBookCache;
+    private source.OrderBook orderBookCache;
 
     public BinanceConnector(String symbol) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
@@ -34,7 +38,7 @@ public class BinanceConnector {
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
-        this.orderBookCache = new Source.OrderBook();
+        this.orderBookCache = new source.OrderBook();
         this.orderBookLastUpdateId = orderBook.getLastUpdateId();
 
         NavigableMap<BigDecimal, BigDecimal> asks = new TreeMap<>(Comparator.reverseOrder());
