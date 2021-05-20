@@ -85,7 +85,7 @@ public class BinanceConnector1 {
                 updateOrderBook(depthCache.getBids(), response.getBids());
                 printDepthCache();
 //                try {
-////                    eM.publish(depthCache);
+//                    eM.publish(depthCache);
 //                    //System.out.println(response);
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();

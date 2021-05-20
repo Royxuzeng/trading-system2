@@ -20,22 +20,19 @@ import messaging.EventManager;
 
 
 public class BinanceConnector {
-    private BinanceApiRestClient client;
 
     private long orderBookLastUpdateId;
 
     private CachedOrderBook orderBookCache;
 
     public BinanceConnector(String symbol) {
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
-        client = factory.newRestClient();
-        initializeOrderBookCache(symbol);
+        initializeDepthCache(symbol);
     }
 
     /**
      * Initializes the depth cache by using the REST API.
      */
-    public void initializeOrderBookCache(String symbol) {
+    public void initializeDepthCache(String symbol) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
@@ -73,12 +70,12 @@ public class BinanceConnector {
         return orderBook;
     }
 
-    public void startOrderBookEventStreaming(String symbol, EventManager eventManager) {
-//        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
-//        BinanceApiWebSocketClient client = factory.newWebSocketClient();
+    public void startDepthEventStreaming(String symbol, EventManager eventManager) {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+        BinanceApiWebSocketClient client = factory.newWebSocketClient();
 
-        BinanceApiWebSocketClient client = new BinanceApiFastWebSocketImpl(
-                BinanceApiServiceGenerator.getSharedClient());
+//        BinanceApiWebSocketClient client = new BinanceApiFastWebSocketImpl(
+//                BinanceApiServiceGenerator.getSharedClient());
 
         client.onDepthEvent(symbol.toLowerCase(), response -> {
             if (response.getFinalUpdateId() > orderBookLastUpdateId) {
@@ -87,11 +84,11 @@ public class BinanceConnector {
                 updateOrderBook(orderBookCache.getBids(), response.getBids());
 
                 printDepthCache();
-                try {
-                    eventManager.publish(orderBookCache);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    eventManager.publish(orderBookCache);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
     }

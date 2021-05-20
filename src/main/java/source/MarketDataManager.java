@@ -4,13 +4,13 @@ import messaging.EventManager;
 
 public class MarketDataManager {
     public String symbol;
-    public BinanceConnector1 binanceConnector;
+    public BinanceConnector binanceConnector;
     public EventManager eventManager;
 
     public MarketDataManager(String symbol, EventManager eventManager) {
         this.symbol = symbol;
         this.eventManager = eventManager;
-        binanceConnector = new BinanceConnector1(symbol);
+        binanceConnector = new BinanceConnector(symbol);
     }
 
     public void subscribeOrderBook() {
