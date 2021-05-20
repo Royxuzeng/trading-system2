@@ -16,6 +16,15 @@ public class AnalyticalManager implements EventListener {
     protected NavigableMap<Long, OrderBook> orderBookCache =
             new TreeMap<>();
     private long orderBookId = 0L;
+    public SimpleMovingAverage sma1;
+    public SimpleMovingAverage sma2;
+
+
+    public AnalyticalManager(int period1, int period2) {
+        this.sma1 = new SimpleMovingAverage(period1);
+        this.sma2 = new SimpleMovingAverage(period2);
+    }
+
 
     @Override
     public void handleEvent(AggTradeEvent aggTradeEvent) {
