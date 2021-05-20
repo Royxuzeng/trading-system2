@@ -1,17 +1,5 @@
-package spark.logic.source;
+package source;
 
-
-import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.BinanceApiRestClient;
-import com.binance.api.client.BinanceApiWebSocketClient;
-import com.binance.api.client.domain.market.AggTrade;
-import com.binance.api.client.domain.market.OrderBook;
-import com.binance.api.client.domain.market.OrderBookEntry;
-import com.binance.api.client.impl.BinanceApiServiceGenerator;
-import spark.data.CachedOrderBook;
-import spark.impl.BinanceApiFastWebSocketImpl;
-import spark.logic.message.EventListener;
-import spark.logic.message.EventManager;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -21,10 +9,20 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.BinanceApiWebSocketClient;
+import com.binance.api.client.domain.market.AggTrade;
+import com.binance.api.client.domain.market.OrderBook;
+import com.binance.api.client.domain.market.OrderBookEntry;
+
+import messaging.EventManager;
+
+
 /**
  * The connection gateway to Binance, to receive prices
  */
-public class BinanceConnector {
+public class BinanceConnector1 {
 
     private static final String BIDS  = "BIDS";
     private static final String ASKS  = "ASKS";
@@ -41,7 +39,7 @@ public class BinanceConnector {
      */
     private Map<Long, AggTrade> aggTradesCache;
 
-    public BinanceConnector(String symbol) {
+    public BinanceConnector1(String symbol) {
         this.symbol = symbol;
         initializeDepthCache(symbol);
         initializeAggTradesCache(symbol);

@@ -3,10 +3,10 @@ package messaging;
 import com.binance.api.client.domain.market.AggTrade;
 
 import scheduling.ScheduleEvent;
-import source.OrderBook;
+import source.CachedOrderBook;
 
 public class EventManager {
-    private EventBroker<OrderBook> orderBookBroker = new EventBroker<>();
+    private EventBroker<CachedOrderBook> orderBookBroker = new EventBroker<>();
     private EventBroker<ScheduleEvent> scheduleQueue = new EventBroker<>();
     private EventBroker<AggTrade>aggTradesBroker = new EventBroker<>();
 
@@ -14,7 +14,7 @@ public class EventManager {
 //        eventListenerList.add(toAdd);
 //    }
 
-//    public void publish(OrderBook orderBook) {
+//    public void publish(CachedOrderBook orderBook) {
 //        for (messaging.EventListener listener: Main.eventListenerList) {
 //            if (listener instanceof algo.AnalyticalManager) {
 //                listener.handleEvent(orderBook);
@@ -22,7 +22,7 @@ public class EventManager {
 //        }
 //    }
 
-    public void publish(OrderBook orderbook) throws InterruptedException {
+    public void publish(CachedOrderBook orderbook) throws InterruptedException {
         orderBookBroker.addEvent(orderbook);
         orderBookBroker.broadcast();
     }

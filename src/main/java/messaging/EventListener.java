@@ -1,4 +1,4 @@
-package messaging;//import com.binance.api.client.domain.market.OrderBook;
+package messaging;//import com.binance.api.client.domain.market.CachedOrderBook;
 
 
 import com.binance.api.client.domain.event.AggTradeEvent;

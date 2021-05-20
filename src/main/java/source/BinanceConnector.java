@@ -24,7 +24,7 @@ public class BinanceConnector {
 
     private long orderBookLastUpdateId;
 
-    private source.OrderBook orderBookCache;
+    private CachedOrderBook orderBookCache;
 
     public BinanceConnector(String symbol) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
@@ -40,7 +40,7 @@ public class BinanceConnector {
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
-        this.orderBookCache = new source.OrderBook();
+        this.orderBookCache = new CachedOrderBook();
         this.orderBookLastUpdateId = orderBook.getLastUpdateId();
 
         NavigableMap<BigDecimal, BigDecimal> asks = new TreeMap<>(Comparator.reverseOrder());
@@ -74,8 +74,11 @@ public class BinanceConnector {
     }
 
     public void startOrderBookEventStreaming(String symbol, EventManager eventManager) {
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
-        BinanceApiWebSocketClient client = factory.newWebSocketClient();
+//        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+//        BinanceApiWebSocketClient client = factory.newWebSocketClient();
+
+        BinanceApiWebSocketClient client = new BinanceApiFastWebSocketImpl(
+                BinanceApiServiceGenerator.getSharedClient());
 
         client.onDepthEvent(symbol.toLowerCase(), response -> {
             if (response.getFinalUpdateId() > orderBookLastUpdateId) {
