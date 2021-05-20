@@ -7,7 +7,7 @@ import source.CachedOrderBook;
 
 public class EventManager {
     private EventBroker<CachedOrderBook> orderBookBroker = new EventBroker<>();
-    private EventBroker<ScheduleEvent> scheduleQueue = new EventBroker<>();
+    private EventBroker<ScheduleEvent> scheduleEventBroker = new EventBroker<>();
     private EventBroker<AggTrade>aggTradesBroker = new EventBroker<>();
 
 //    public void addListener(messaging.EventListener toAdd) {
@@ -27,13 +27,14 @@ public class EventManager {
         orderBookBroker.broadcast();
     }
 
-    public void publish(ScheduleEvent timer) {
-
+    public void publish(ScheduleEvent timer) throws InterruptedException {
+        scheduleEventBroker.addEvent(timer);
+        scheduleEventBroker.broadcast();
     }
 
     public void addListener(EventListener listener) {
         aggTradesBroker.addListener(listener);
         orderBookBroker.addListener(listener);
-        scheduleQueue.addListener(listener);
+        scheduleEventBroker.addListener(listener);
     }
 }
