@@ -85,14 +85,13 @@ public class BinanceConnector {
 
                 printDepthCache();
 
+                try {
+                    eventManager.publish(orderBookCache);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
-
-        try {
-            eventManager.publish(orderBookCache);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void printDepthCache() {
