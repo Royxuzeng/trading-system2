@@ -20,9 +20,9 @@ public class AnalyticalManager implements EventListener {
     public SimpleMovingAverage sma2;
 
 
-    public AnalyticalManager(int period1, int period2) {
-        this.sma1 = new SimpleMovingAverage(period1);
-        this.sma2 = new SimpleMovingAverage(period2);
+    public AnalyticalManager(int window1, int window2) {
+        this.sma1 = new SimpleMovingAverage(window1);
+        this.sma2 = new SimpleMovingAverage(window2);
     }
 
 
