@@ -13,11 +13,11 @@ import org.quartz.impl.StdSchedulerFactory;
 import messaging.EventManager;
 
 public class SchedulerManager {
-    private EventManager em;
-    private Scheduler scheduler;
+    private final EventManager eventManager;
+    private final Scheduler scheduler;
 
-    public SchedulerManager() throws SchedulerException {
-        this.em = em;
+    public SchedulerManager(EventManager eventManager) throws SchedulerException {
+        this.eventManager = eventManager;
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         this.scheduler = schedulerFactory.getScheduler();
     }
@@ -33,7 +33,7 @@ public class SchedulerManager {
         JobDetail timer = JobBuilder.newJob(Timer.class)
                 .build();
         timer.getJobDataMap().put("tag",tag);
-        timer.getJobDataMap().put("em",em);
+        timer.getJobDataMap().put("em", eventManager);
         scheduler.scheduleJob(timer,trigger);
         scheduler.start();
     }
