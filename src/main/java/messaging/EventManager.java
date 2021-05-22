@@ -24,17 +24,26 @@ public class EventManager {
 
     public void publish(CachedOrderBook orderbook) throws InterruptedException {
         orderBookBroker.addEvent(orderbook);
-        orderBookBroker.broadcast();
+//        orderBookBroker.broadcast();
     }
 
     public void publish(ScheduleEvent timer) throws InterruptedException {
         scheduleEventBroker.addEvent(timer);
-        scheduleEventBroker.broadcast();
+//        scheduleEventBroker.broadcast();
     }
 
     public void addListener(EventListener listener) {
         aggTradesBroker.addListener(listener);
         orderBookBroker.addListener(listener);
         scheduleEventBroker.addListener(listener);
+    }
+
+
+    public EventBroker getOrderBookEventBroker() {
+        return this.orderBookBroker;
+    }
+
+    public EventBroker getScheduledEventEventBroker() {
+        return this.scheduleEventBroker;
     }
 }

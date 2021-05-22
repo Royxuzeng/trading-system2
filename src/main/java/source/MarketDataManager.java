@@ -2,7 +2,7 @@ package source;
 
 import messaging.EventManager;
 
-public class MarketDataManager {
+public class MarketDataManager implements Runnable{
     public String symbol;
     public BinanceConnector binanceConnector;
     public EventManager eventManager;
@@ -26,5 +26,10 @@ public class MarketDataManager {
 
     public void subscribeTrades(String symbol) {
 
+    }
+
+    @Override
+    public void run() {
+        subscribeOrderBook();
     }
 }

@@ -1,6 +1,12 @@
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import org.quartz.SchedulerException;
+
 import algo.AnalyticalManager;
 import algo.SimpleMovingAverage;
 import messaging.EventManager;
+import scheduling.SchedulerManager;
 import source.MarketDataManager;
 
 public class Main {
@@ -11,7 +17,7 @@ public class Main {
 //    public static List<messaging.EventListener> eventListenerList;
 
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws SchedulerException {
 //        marketDataManager = new source.MarketDataManager();
 //        schedulerManager = new scheduling.SchedulerManager();
 //        eventManager = new messaging.EventManager();
@@ -21,10 +27,14 @@ public class Main {
 //        eventListenerList.add(new algo.AnalyticalManager());
 
         EventManager eventManager = new EventManager();
-
         MarketDataManager marketDataManager = new MarketDataManager("ETHBTC", eventManager);
+        SchedulerManager schedulerManager = new SchedulerManager(eventManager);
+        SimpleMovingAverage sma = new SimpleMovingAverage(1000, 3000, eventManager,
+                schedulerManager, 10, 20);
+        ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
 
-        marketDataManager.subscribeOrderBook();
+        eS.execute(marketDataManager);
+        eS.execute(sma);
 //        AnalyticalManager analyticalManager = new SimpleMovingAverage(5);
 //        eventManager.addListener(analyticalManager);
 

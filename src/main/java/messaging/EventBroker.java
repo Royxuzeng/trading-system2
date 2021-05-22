@@ -18,6 +18,10 @@ public class EventBroker<T> {
         eventQueue.put(event);
     }
 
+    public T takeEvent() throws InterruptedException {
+        return eventQueue.take();
+    }
+
     public void broadcast() throws InterruptedException {
         if (eventQueue.isEmpty()) {
             System.out.println("No events to broadcast.");
