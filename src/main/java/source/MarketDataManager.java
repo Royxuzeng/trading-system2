@@ -1,7 +1,6 @@
 package source;
 
 import messaging.EventManager;
-import source.BinanceConnector;
 
 public class MarketDataManager {
     public String symbol;
@@ -15,14 +14,14 @@ public class MarketDataManager {
     }
 
     public void subscribeOrderBook() {
-//        OrderBook orderBook = Main.binanceConnector.getOrderBook(symbol);
+//        CachedOrderBook orderBook = Main.binanceConnector.getOrderBook(symbol);
 //        String price = orderBookEntry.getPrice();
 //        String qty = orderBookEntry.getQty();
 //        Data.orderBookList.add(orderBook);
 
 //        Main.eventManager.publish(orderBook);
 
-        binanceConnector.startDepthEventStreaming(symbol);
+        binanceConnector.startDepthEventStreaming(symbol, eventManager);
     }
 
     public void subscribeTrades(String symbol) {

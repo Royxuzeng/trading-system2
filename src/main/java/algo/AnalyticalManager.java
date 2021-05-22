@@ -9,13 +9,22 @@ import com.binance.api.client.domain.market.AggTrade;
 import com.binance.api.client.domain.market.OrderBook;
 
 import messaging.EventListener;
-import source.ScheduleEvent;
+import scheduling.ScheduleEvent;
 
 public class AnalyticalManager implements EventListener {
     protected NavigableMap<Long, AggTrade> aggTradesCache = new TreeMap<>();
     protected NavigableMap<Long, OrderBook> orderBookCache =
             new TreeMap<>();
     private long orderBookId = 0L;
+    public SimpleMovingAverage sma1;
+    public SimpleMovingAverage sma2;
+
+
+    public AnalyticalManager(int window1, int window2) {
+        this.sma1 = new SimpleMovingAverage(window1);
+        this.sma2 = new SimpleMovingAverage(window2);
+    }
+
 
     @Override
     public void handleEvent(AggTradeEvent aggTradeEvent) {
