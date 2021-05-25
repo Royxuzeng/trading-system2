@@ -24,6 +24,9 @@ public class SimpleMovingAverage implements Runnable, EventListener {
     public CachedOrderBook cachedOrderBook = null;
     public int interval1;
     public int interval2;
+    public int windowSize1;
+    public int windowSize2;
+    public RiskWatcher riskWatcher;
 
     public SimpleMovingAverage(int interval1, int interval2, EventManager eventManager,
                                SchedulerManager schedulerManager,
@@ -34,8 +37,9 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         this.sma2 = new DescriptiveStatistics(windowSize2);
         this.eventManager = eventManager;
         this.schedulerManager = schedulerManager;
-        this.interval1 = windowSize1;
-        this.interval2 = windowSize2;
+        this.windowSize1 = windowSize1;
+        this.windowSize2 = windowSize2;
+        this.riskWatcher = new RiskWatcher(sma1, sma2);
     }
 
 
@@ -64,25 +68,23 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         if (cachedOrderBook == null) {
             return;
         } else if (tag.equals("sma1")) {
+            if (sma1.getN() == 5) {
+                riskWatcher.handleSma1();
+                sma1 = new DescriptiveStatistics(windowSize1);
+                riskWatcher.sma1 = sma1;
+            }
+
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma1.getMean()));
-
-            if (sma1.getN() == 10) {
-                double stdev = sma1.getStandardDeviation();
-                System.out.println("Standard deviation of last 10 prices for sma1 are " +
-                        String.format("%.4f", stdev));
-                sma1 = new DescriptiveStatistics(interval1);
-            }
         } else if (tag.equals("sma2")) {
+            if (sma2.getN() == 5) {
+                riskWatcher.handleSma2();
+                sma2 = new DescriptiveStatistics(windowSize2);
+                riskWatcher.sma2 = sma2;
+            }
+
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma2.getMean()));
-
-            if (sma2.getN() == 10) {
-                double stdev = sma2.getStandardDeviation();
-                System.out.println("Standard deviation of last 10 prices for sma2 are " +
-                        String.format("%.4f", stdev));
-                sma2 = new DescriptiveStatistics(interval2);
-            }
         }
 
 
@@ -119,7 +121,9 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         while (true) {
             try {
                 handleEvent((CachedOrderBook) orderBookEventBroker.takeEvent());
-                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
+                ScheduleEvent scheduleEvent = (ScheduleEvent) scheduledEventBroker.takeEvent();
+                handleEvent(scheduleEvent);
+//                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
