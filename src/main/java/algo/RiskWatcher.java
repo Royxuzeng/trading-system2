@@ -13,12 +13,6 @@ public class RiskWatcher implements EventListener {
     DescriptiveStatistics sma1;
     DescriptiveStatistics sma2;
 
-//    @Override
-//    public void run() {
-//
-//    }
-
-
     public RiskWatcher(DescriptiveStatistics sma1, DescriptiveStatistics sma2) {
         this.sma1 = sma1;
         this.sma2 = sma2;
