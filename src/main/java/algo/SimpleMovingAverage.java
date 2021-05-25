@@ -66,9 +66,23 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         } else if (tag.equals("sma1")) {
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma1.getMean()));
+
+            if (sma1.getN() == 10) {
+                double stdev = sma1.getStandardDeviation();
+                System.out.println("Standard deviation of last 10 prices for sma1 are " +
+                        String.format("%.4f", stdev));
+                sma1 = new DescriptiveStatistics(interval1);
+            }
         } else if (tag.equals("sma2")) {
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma2.getMean()));
+
+            if (sma2.getN() == 10) {
+                double stdev = sma2.getStandardDeviation();
+                System.out.println("Standard deviation of last 10 prices for sma2 are " +
+                        String.format("%.4f", stdev));
+                sma2 = new DescriptiveStatistics(interval2);
+            }
         }
 
 
