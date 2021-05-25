@@ -73,7 +73,6 @@ public class SimpleMovingAverage implements Runnable, EventListener {
                 sma1 = new DescriptiveStatistics(windowSize1);
                 riskWatcher.sma1 = sma1;
             }
-
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma1.getMean()));
         } else if (tag.equals("sma2")) {
@@ -82,7 +81,6 @@ public class SimpleMovingAverage implements Runnable, EventListener {
                 sma2 = new DescriptiveStatistics(windowSize2);
                 riskWatcher.sma2 = sma2;
             }
-
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             System.out.println(tag + ": " + String.format("%.4f", sma2.getMean()));
         }
