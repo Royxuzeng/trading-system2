@@ -27,6 +27,10 @@ public class SimpleMovingAverage implements Runnable, EventListener {
     public int windowSize1;
     public int windowSize2;
     public RiskWatcher riskWatcher;
+    private int count = 0;
+    private double mostRecentSma1 = 0;
+    private double mostRecentSma2 = 0;
+
 
     public SimpleMovingAverage(int interval1, int interval2, EventManager eventManager,
                                SchedulerManager schedulerManager,
@@ -65,27 +69,34 @@ public class SimpleMovingAverage implements Runnable, EventListener {
 
     private void computeSMA(ScheduleEvent scheduledEvent) {
         String tag = scheduledEvent.getTag();
+        if (count == 40) {
+            riskWatcher.handleSma1();
+            riskWatcher.handleSma2();
+            count = 0;
+        }
         if (cachedOrderBook == null) {
             return;
         } else if (tag.equals("sma1")) {
-            if (sma1.getN() == 5) {
-                riskWatcher.handleSma1();
-                sma1 = new DescriptiveStatistics(windowSize1);
-                riskWatcher.sma1 = sma1;
-            }
+//            if (sma1.getN() >= 10) {
+//                riskWatcher.handleSma1();
+//                sma1 = new DescriptiveStatistics(windowSize1);
+//                riskWatcher.sma1 = sma1;
+//            }
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
-            System.out.println(tag + ": " + String.format("%.4f", sma1.getMean()));
+            mostRecentSma1 = sma1.getMean();
+            System.out.println(tag + ": " + String.format("%.4f", mostRecentSma1));
         } else if (tag.equals("sma2")) {
-            if (sma2.getN() == 5) {
-                riskWatcher.handleSma2();
-                sma2 = new DescriptiveStatistics(windowSize2);
-                riskWatcher.sma2 = sma2;
-            }
+//            if (sma2.getN() >= 20) {
+//                riskWatcher.handleSma2();
+//                sma2 = new DescriptiveStatistics(windowSize2);
+//                riskWatcher.sma2 = sma2;
+//            }
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
-            System.out.println(tag + ": " + String.format("%.4f", sma2.getMean()));
+            mostRecentSma2 = sma2.getMean();
+            System.out.println(tag + ": " + String.format("%.4f", mostRecentSma2));
         }
-
-
+        riskWatcher.handleEvent(mostRecentSma1, mostRecentSma2);
+        count++;
     }
 
     private double computeWeightedAverage(CachedOrderBook orderBook) {
