@@ -134,6 +134,10 @@ public class SimpleMovingAverage implements Runnable, EventListener {
                 handleEvent((CachedOrderBook) orderBookEventBroker.takeEvent());
                 ScheduleEvent scheduleEvent = (ScheduleEvent) scheduledEventBroker.takeEvent();
                 handleEvent(scheduleEvent);
+
+//                orderBookEventBroker.takeEvent();
+//                scheduledEventBroker.takeEvent();
+
 //                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
             } catch (InterruptedException e) {
                 e.printStackTrace();
