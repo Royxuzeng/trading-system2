@@ -70,8 +70,8 @@ public class SimpleMovingAverage implements Runnable, EventListener {
     private void computeSMA(ScheduleEvent scheduledEvent) {
         String tag = scheduledEvent.getTag();
         if (count == 40) {
-            riskWatcher.handleSma1();
-            riskWatcher.handleSma2();
+            riskWatcher.handleSma1Data();
+            riskWatcher.handleSma2Data();
             count = 0;
         }
         if (cachedOrderBook == null) {
@@ -84,6 +84,7 @@ public class SimpleMovingAverage implements Runnable, EventListener {
 //            }
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma1 = sma1.getMean();
+            riskWatcher.sma1Data.addValue(mostRecentSma1);
             System.out.println(tag + ": " + String.format("%.4f", mostRecentSma1));
         } else if (tag.equals("sma2")) {
 //            if (sma2.getN() >= 20) {
@@ -93,6 +94,7 @@ public class SimpleMovingAverage implements Runnable, EventListener {
 //            }
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma2 = sma2.getMean();
+            riskWatcher.sma2Data.addValue(mostRecentSma2);
             System.out.println(tag + ": " + String.format("%.4f", mostRecentSma2));
         }
         riskWatcher.handleEvent(mostRecentSma1, mostRecentSma2);

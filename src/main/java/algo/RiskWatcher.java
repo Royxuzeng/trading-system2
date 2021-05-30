@@ -12,6 +12,8 @@ import source.CachedOrderBook;
 public class RiskWatcher implements EventListener {
     DescriptiveStatistics sma1;
     DescriptiveStatistics sma2;
+    public DescriptiveStatistics sma1Data;
+    public DescriptiveStatistics sma2Data;
     private final int SMA1LARGER = 1;
     private final int SMA2LARGER = 0;
     private int state;
@@ -19,6 +21,8 @@ public class RiskWatcher implements EventListener {
     public RiskWatcher(DescriptiveStatistics sma1, DescriptiveStatistics sma2) {
         this.sma1 = sma1;
         this.sma2 = sma2;
+        this.sma1Data = new DescriptiveStatistics(10);
+        this.sma2Data = new DescriptiveStatistics(20);
         this.state = -1;
     }
 
@@ -52,14 +56,14 @@ public class RiskWatcher implements EventListener {
         }
     }
 
-    public void handleSma1() {
+    public void handleSma1Data() {
         System.out.println("statistics of prices for sma1 are " +
-                sma1.toString());
+                sma1Data.toString());
     }
 
-    public void handleSma2() {
+    public void handleSma2Data() {
         System.out.println("statistics of prices for sma2 are " +
-                sma2.toString());
+                sma2Data.toString());
     }
 
     @Override
