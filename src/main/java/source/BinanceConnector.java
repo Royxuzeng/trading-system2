@@ -37,12 +37,9 @@ public class BinanceConnector {
         File file = new File("secret.txt");
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
-        while ((st = br.readLine()) != null)
+        while ((st = br.readLine()) != null);
 
-            // Print the string
-            System.out.println(st);
-
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("UyYr92Z8wqKAyurjUjDq7evelP2OpwH4AqMPa4ca85JQRJvBZFwIf0JRdOr2tA3A", st);
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
