@@ -12,14 +12,6 @@ import source.MarketDataManager;
 
 public class Main {
     public static void main(String args[]) throws SchedulerException, IOException {
-//        marketDataManager = new source.MarketDataManager();
-//        schedulerManager = new scheduling.SchedulerManager();
-//        eventManager = new messaging.EventManager();
-//        binanceConnector = new source.BinanceConnector();
-//        eventListenerList = new ArrayList<>();
-//
-//        eventListenerList.add(new algo.AnalyticalManager());
-
         EventManager eventManager = new EventManager();
         MarketDataManager marketDataManager = new MarketDataManager("ETHBTC", eventManager);
         SchedulerManager schedulerManager = new SchedulerManager(eventManager);
