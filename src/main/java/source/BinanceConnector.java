@@ -38,8 +38,9 @@ public class BinanceConnector {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String st;
         while ((st = br.readLine()) != null);
+        String apikey = "UyYr92Z8wqKAyurjUjDq7evelP2OpwH4AqMPa4ca85JQRJvBZFwIf0JRdOr2tA3A";
 
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("UyYr92Z8wqKAyurjUjDq7evelP2OpwH4AqMPa4ca85JQRJvBZFwIf0JRdOr2tA3A", st);
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apikey, st);
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
