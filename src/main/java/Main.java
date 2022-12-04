@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -17,7 +18,7 @@ public class Main {
 //    public static List<messaging.EventListener> eventListenerList;
 
 
-    public static void main(String args[]) throws SchedulerException {
+    public static void main(String args[]) throws SchedulerException, IOException {
 //        marketDataManager = new source.MarketDataManager();
 //        schedulerManager = new scheduling.SchedulerManager();
 //        eventManager = new messaging.EventManager();

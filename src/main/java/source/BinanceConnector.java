@@ -1,5 +1,6 @@
 package source;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -25,14 +26,22 @@ public class BinanceConnector {
 
     private CachedOrderBook orderBookCache;
 
-    public BinanceConnector(String symbol) {
+    public BinanceConnector(String symbol) throws IOException {
         initializeDepthCache(symbol);
     }
 
     /**
      * Initializes the depth cache by using the REST API.
      */
-    public void initializeDepthCache(String symbol) {
+    public void initializeDepthCache(String symbol) throws IOException {
+        File file = new File("secret.txt");
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String st;
+        while ((st = br.readLine()) != null)
+
+            // Print the string
+            System.out.println(st);
+
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
         BinanceApiRestClient client = factory.newRestClient();
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
