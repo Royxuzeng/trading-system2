@@ -11,13 +11,6 @@ import scheduling.SchedulerManager;
 import source.MarketDataManager;
 
 public class Main {
-//    public static source.MarketDataManager marketDataManager;
-//    public static scheduling.SchedulerManager schedulerManager;
-//    public static messaging.EventManager eventManager;
-//    public static source.BinanceConnector binanceConnector;
-//    public static List<messaging.EventListener> eventListenerList;
-
-
     public static void main(String args[]) throws SchedulerException, IOException {
 //        marketDataManager = new source.MarketDataManager();
 //        schedulerManager = new scheduling.SchedulerManager();
