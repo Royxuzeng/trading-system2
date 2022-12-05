@@ -82,9 +82,6 @@ public class BinanceConnector {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
         BinanceApiWebSocketClient client = factory.newWebSocketClient();
 
-//        BinanceApiWebSocketClient client = new BinanceApiFastWebSocketImpl(
-//                BinanceApiServiceGenerator.getSharedClient());
-
         // Listen for changes in the order book for symbol, eg.ETH/BTC
         // second arg is called for each event received from the Binance servers
         client.onDepthEvent(symbol.toLowerCase(), response -> {
