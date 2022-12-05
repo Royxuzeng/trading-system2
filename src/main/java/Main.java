@@ -4,7 +4,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.quartz.SchedulerException;
 
-import algo.AnalyticalManager;
 import algo.SimpleMovingAverage;
 import messaging.EventManager;
 import scheduling.SchedulerManager;
@@ -18,7 +17,6 @@ public class Main {
         SimpleMovingAverage sma = new SimpleMovingAverage(500, 500, eventManager,
                                     schedulerManager, 10, 20);
         ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
-//        eventManager.addListener(sma);
 
         eS.execute(marketDataManager);
         eS.execute(sma);

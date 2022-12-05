@@ -10,13 +10,12 @@ import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 
 import messaging.EventBroker;
-import messaging.EventListener;
 import messaging.EventManager;
 import scheduling.ScheduleEvent;
 import scheduling.SchedulerManager;
 import source.CachedOrderBook;
 
-public class SimpleMovingAverage implements Runnable, EventListener {
+public class SimpleMovingAverage implements Runnable {
     public DescriptiveStatistics sma1;
     public DescriptiveStatistics sma2;
     public EventManager eventManager;
@@ -46,23 +45,10 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         this.riskWatcher = new RiskWatcher(sma1, sma2);
     }
 
-
-    @Override
     public void handleEvent(CachedOrderBook orderBook) {
         cachedOrderBook = orderBook;
     }
 
-    @Override
-    public void handleEvent(AggTradeEvent aggTrade) {
-
-    }
-
-    @Override
-    public void handleEvent(DepthEvent event) {
-
-    }
-
-    @Override
     public void handleEvent(ScheduleEvent scheduledEvent) {
         computeSMA(scheduledEvent);
     }

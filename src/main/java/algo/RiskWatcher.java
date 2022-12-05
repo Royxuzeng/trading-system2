@@ -5,11 +5,10 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 
-import messaging.EventListener;
 import scheduling.ScheduleEvent;
 import source.CachedOrderBook;
 
-public class RiskWatcher implements EventListener {
+public class RiskWatcher {
     DescriptiveStatistics sma1;
     DescriptiveStatistics sma2;
     public DescriptiveStatistics sma1Data;
@@ -26,11 +25,6 @@ public class RiskWatcher implements EventListener {
         this.state = -1;
     }
 
-    @Override
-    public void handleEvent(ScheduleEvent timer) {
-        System.out.println("sma1 n " + sma1.getN());
-        System.out.println("sma2 n " + sma2.getN());
-    }
 
     public void handleEvent(double sma1Value, double sma2Value) {
         if (sma1Value == 0 || sma2Value == 0) {
@@ -64,20 +58,5 @@ public class RiskWatcher implements EventListener {
     public void handleSma2Data() {
         System.out.println("statistics of prices for sma2 are " +
                 sma2Data.toString());
-    }
-
-    @Override
-    public void handleEvent(CachedOrderBook orderBook) {
-
-    }
-
-    @Override
-    public void handleEvent(AggTradeEvent aggTrade) {
-
-    }
-
-    @Override
-    public void handleEvent(DepthEvent event) {
-
     }
 }
