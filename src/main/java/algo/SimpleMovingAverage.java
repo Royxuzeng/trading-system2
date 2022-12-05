@@ -64,21 +64,11 @@ public class SimpleMovingAverage implements Runnable {
         if (cachedOrderBook == null) {
             return;
         } else if (tag.equals("sma1")) {
-//            if (sma1.getN() >= 10) {
-//                riskWatcher.handleSma1();
-//                sma1 = new DescriptiveStatistics(windowSize1);
-//                riskWatcher.sma1 = sma1;
-//            }
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma1 = sma1.getMean();
             riskWatcher.sma1Data.addValue(mostRecentSma1);
             System.out.println(tag + ": " + String.format("%.10f", mostRecentSma1));
         } else if (tag.equals("sma2")) {
-//            if (sma2.getN() >= 20) {
-//                riskWatcher.handleSma2();
-//                sma2 = new DescriptiveStatistics(windowSize2);
-//                riskWatcher.sma2 = sma2;
-//            }
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma2 = sma2.getMean();
             riskWatcher.sma2Data.addValue(mostRecentSma2);
