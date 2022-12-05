@@ -42,6 +42,7 @@ public class BinanceConnector {
 
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apikey, st);
         BinanceApiRestClient client = factory.newRestClient();
+        // limit is 10 means orderbook has 10 bid data and 10 ask data
         OrderBook orderBook = client.getOrderBook(symbol.toUpperCase(), 10);
 
         this.orderBookCache = new CachedOrderBook();

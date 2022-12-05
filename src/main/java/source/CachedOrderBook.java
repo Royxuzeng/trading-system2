@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 public class CachedOrderBook {
+
+    // key is the "ASKS" or "BIDS". ask is to sell. bid is to buy.
+    // NavigableMap: https://www.geeksforgeeks.org/navigablemap-interface-in-java-with-example/
+    // for the map, first value is price, second value is quantity. sorted from big to small
     private Map<String, NavigableMap<BigDecimal, BigDecimal>> orderBook;
 
     public CachedOrderBook() {
@@ -27,6 +31,7 @@ public class CachedOrderBook {
     /**
      * @return the best ask in the order book
      */
+    // the lowest (or best) price someone is willing to sell
     public Map.Entry<BigDecimal, BigDecimal> getBestAsk() {
         return getAsks().lastEntry();
     }
