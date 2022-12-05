@@ -85,7 +85,7 @@ public class SimpleMovingAverage implements Runnable, EventListener {
             sma1.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma1 = sma1.getMean();
             riskWatcher.sma1Data.addValue(mostRecentSma1);
-            System.out.println(tag + ": " + String.format("%.4f", mostRecentSma1));
+            System.out.println(tag + ": " + String.format("%.10f", mostRecentSma1));
         } else if (tag.equals("sma2")) {
 //            if (sma2.getN() >= 20) {
 //                riskWatcher.handleSma2();
@@ -95,7 +95,7 @@ public class SimpleMovingAverage implements Runnable, EventListener {
             sma2.addValue(computeWeightedAverage(cachedOrderBook));
             mostRecentSma2 = sma2.getMean();
             riskWatcher.sma2Data.addValue(mostRecentSma2);
-            System.out.println(tag + ": " + String.format("%.4f", mostRecentSma2));
+            System.out.println(tag + ": " + String.format("%.10f", mostRecentSma2));
         }
         riskWatcher.handleEvent(mostRecentSma1, mostRecentSma2);
         count++;
@@ -110,9 +110,9 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         double bestBidQuantity = bestBid.getValue().doubleValue();
         double bestAskQuantity = bestAsk.getValue().doubleValue();
 
-        double totalQuantity = (bestBidQuantity * bestBidPrice +
-                bestAskQuantity + bestAskPrice) / (bestBidQuantity + bestAskQuantity);
-        return totalQuantity;
+        double weightedAverage = (bestBidQuantity * bestBidPrice +
+                bestAskQuantity * bestAskPrice) / (bestBidQuantity + bestAskQuantity);
+        return weightedAverage;
     }
 
     @Override

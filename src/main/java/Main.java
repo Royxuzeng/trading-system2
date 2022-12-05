@@ -15,8 +15,8 @@ public class Main {
         EventManager eventManager = new EventManager();
         MarketDataManager marketDataManager = new MarketDataManager("ETHBTC", eventManager);
         SchedulerManager schedulerManager = new SchedulerManager(eventManager);
-        SimpleMovingAverage sma = new SimpleMovingAverage(1000, 3000, eventManager,
-                schedulerManager, 10, 20);
+        SimpleMovingAverage sma = new SimpleMovingAverage(500, 500, eventManager,
+                                    schedulerManager, 10, 20);
         ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
 //        eventManager.addListener(sma);
 
