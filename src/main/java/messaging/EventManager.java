@@ -22,11 +22,14 @@ public class EventManager {
 //        }
 //    }
 
+    // put orderbook to eventQueue.
     public void publish(CachedOrderBook orderbook) throws InterruptedException {
         orderBookBroker.addEvent(orderbook);
 //        orderBookBroker.broadcast();
     }
 
+    // timer executes it
+    // put schedule event to eventQueue (which is type BlockingQueue)
     public void publish(ScheduleEvent timer) throws InterruptedException {
         scheduleEventBroker.addEvent(timer);
 //        scheduleEventBroker.broadcast();

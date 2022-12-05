@@ -85,6 +85,8 @@ public class BinanceConnector {
 //        BinanceApiWebSocketClient client = new BinanceApiFastWebSocketImpl(
 //                BinanceApiServiceGenerator.getSharedClient());
 
+        // Listen for changes in the order book for symbol, eg.ETH/BTC
+        // second arg is called for each event received from the Binance servers
         client.onDepthEvent(symbol.toLowerCase(), response -> {
             if (response.getFinalUpdateId() > orderBookLastUpdateId) {
                 orderBookLastUpdateId = response.getFinalUpdateId();
