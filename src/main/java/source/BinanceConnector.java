@@ -61,23 +61,6 @@ public class BinanceConnector {
         orderBookCache.put("BIDS", bids);
     }
 
-    public static void main (String[] args) {
-        BinanceApiWebSocketClient client = BinanceApiClientFactory.newInstance().newWebSocketClient();
-
-    }
-
-    public OrderBook getOrderBook(String symbol) {
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("API-KEY", "SECRET");
-        BinanceApiRestClient client = factory.newRestClient();
-
-        OrderBook orderBook = client.getOrderBook(symbol, 10);
-        List<OrderBookEntry> asks = orderBook.getAsks();
-        OrderBookEntry firstAskEntry = asks.get(0);
-        System.out.println(firstAskEntry.getPrice() + " / " + firstAskEntry.getQty());
-
-        return orderBook;
-    }
-
     public void startDepthEventStreaming(String symbol, EventManager eventManager) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance();
         BinanceApiWebSocketClient client = factory.newWebSocketClient();
@@ -91,7 +74,6 @@ public class BinanceConnector {
                 updateOrderBook(orderBookCache.getBids(), response.getBids());
 
 //                printDepthCache();
-
                 try {
                     eventManager.publish(orderBookCache);
                 } catch (InterruptedException e) {

@@ -15,12 +15,8 @@ public class MarketDataManager implements Runnable{
         binanceConnector = new BinanceConnector(symbol);
     }
 
-    public void subscribeOrderBook() {
-        binanceConnector.startDepthEventStreaming(symbol, eventManager);
-    }
-
     @Override
     public void run() {
-        subscribeOrderBook();
+        binanceConnector.startDepthEventStreaming(symbol, eventManager);
     }
 }
