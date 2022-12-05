@@ -1,0 +1,26 @@
+ScheduleEvent Flow
+it's like a key generated between the specified interval. need to get the scheduleEvent first before compute moving average
+
+
+SimpleMovingAverage run calls schedulerManager periodicCallback
+=>
+schedulerManager periodicCallback schedules trigger and timer job and start the job (interval used in trigger, timer job defined) 
+=>
+timer job periodically puts scheduleEvent to scheduleEventBroker's blocking queue
+(scheduleEvent just contains a tag indicating sma1 or 2)
+
+
+SimpleMovingAverage run takes out one scheduleEvent from scheduleEventBroker's blocking queue and calls handleEvent(ScheduleEvent), which passes the scheduleEvent to computeSMA 
+=> 
+computeSMA checks tag from scheduleEvent (sma1 or 2)
+=>
+computeSMA uses cachedOrderBook to update sma1 and sma1data
+=>
+computeSMA calls riskWatcher handleEvent to check if it needs to generate signal
+
+
+schedulerManager => eventManager => orderBookBroker and scheduleEventBroker
+
+
+sma1 is descriptiveStatistics with a window size of 10. Each value is a weighted average computed from an orderbook. 
+sma1Data  is descriptiveStatistics with a window size of 10. Each value is the mean of sma1. the most recent value is used to compare with sma2 to generate signal to buy or sell
