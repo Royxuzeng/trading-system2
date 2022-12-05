@@ -105,16 +105,13 @@ public class SimpleMovingAverage implements Runnable, EventListener {
         Map.Entry<BigDecimal, BigDecimal> bestBid = orderBook.getBestBid();
         Map.Entry<BigDecimal, BigDecimal> bestAsk = orderBook.getBestAsk();
 
-        double bestBidPrice = bestBid.getValue().doubleValue();
-        double bestAskPrice = bestAsk.getValue().doubleValue();
-
-        double bestBidQuantity = bestBid.getKey().doubleValue();
-        double bestAskQuantity = bestAsk.getKey().doubleValue();
-
+        double bestBidPrice = bestBid.getKey().doubleValue();
+        double bestAskPrice = bestAsk.getKey().doubleValue();
+        double bestBidQuantity = bestBid.getValue().doubleValue();
+        double bestAskQuantity = bestAsk.getValue().doubleValue();
 
         double totalQuantity = (bestBidQuantity * bestBidPrice +
                 bestAskQuantity + bestAskPrice) / (bestBidQuantity + bestAskQuantity);
-
         return totalQuantity;
     }
 

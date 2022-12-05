@@ -18,7 +18,7 @@ public class Main {
         SimpleMovingAverage sma = new SimpleMovingAverage(1000, 3000, eventManager,
                 schedulerManager, 10, 20);
         ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
-        eventManager.addListener(sma);
+//        eventManager.addListener(sma);
 
         eS.execute(marketDataManager);
         eS.execute(sma);
