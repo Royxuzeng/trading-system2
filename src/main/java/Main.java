@@ -16,15 +16,12 @@ public class Main {
         SchedulerManager schedulerManager = new SchedulerManager(eventManager);
         SimpleMovingAverage sma = new SimpleMovingAverage(500, 500, eventManager,
                                     schedulerManager, 10, 20);
-        ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
 
+        // 2 tasks
+        // marketDataManager gets order book from binance and puts it into block queue
+        // sma takes order book from block queue
+        ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
         eS.execute(marketDataManager);
         eS.execute(sma);
-//        AnalyticalManager analyticalManager = new SimpleMovingAverage(5);
-//        eventManager.addListener(analyticalManager);
-
-
-//        marketDataManager.subscribeOrderBook(symbol);
-//        schedulerManager.periodicCallBack(500);
     }
 }
