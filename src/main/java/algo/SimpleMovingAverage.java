@@ -31,6 +31,7 @@ public class SimpleMovingAverage implements Runnable {
     private double mostRecentSma2 = 0;
 
 
+    // interval used in trigger interval in periodic callback
     public SimpleMovingAverage(int interval1, int interval2, EventManager eventManager,
                                SchedulerManager schedulerManager,
                                int windowSize1, int windowSize2) {
@@ -115,18 +116,10 @@ public class SimpleMovingAverage implements Runnable {
         while (true) {
             try {
                 handleEvent((CachedOrderBook) orderBookEventBroker.takeEvent());
-                ScheduleEvent scheduleEvent = (ScheduleEvent) scheduledEventBroker.takeEvent();
-                handleEvent(scheduleEvent);
-
-//                orderBookEventBroker.takeEvent();
-//                scheduledEventBroker.takeEvent();
-
-//                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
+                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
-
-
 }

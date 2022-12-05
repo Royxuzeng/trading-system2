@@ -18,8 +18,8 @@ public class Main {
                                     schedulerManager, 10, 20);
 
         // 2 tasks
-        // marketDataManager gets order book from binance and puts it into block queue
-        // sma takes order book from block queue
+        // marketDataManager gets order book from binance and puts it into blocking queue
+        // sma takes order book from blocking queue
         ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
         eS.execute(marketDataManager);
         eS.execute(sma);
