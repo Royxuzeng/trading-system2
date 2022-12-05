@@ -17,9 +17,8 @@ public class EventManager {
 
     // timer executes it
     // put schedule event to eventQueue (which is type BlockingQueue)
-    public void publish(ScheduleEvent timer) throws InterruptedException {
-        scheduleEventBroker.addEvent(timer);
-//        scheduleEventBroker.broadcast();
+    public void publish(ScheduleEvent scheduleEvent) throws InterruptedException {
+        scheduleEventBroker.addEvent(scheduleEvent);
     }
 
     public EventBroker getOrderBookEventBroker() {

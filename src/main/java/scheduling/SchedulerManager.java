@@ -22,6 +22,7 @@ public class SchedulerManager {
         this.scheduler = schedulerFactory.getScheduler();
     }
 
+    // timer defines how often computeSMA is called
     public void periodicCallBack(int intervalMillis, String tag) throws SchedulerException {
         Trigger trigger = TriggerBuilder.newTrigger()
                 .startNow()
@@ -30,11 +31,11 @@ public class SchedulerManager {
                         .repeatForever())
                 .build();
 
-        JobDetail timer = JobBuilder.newJob(Timer.class)
+        JobDetail timerJob = JobBuilder.newJob(Timer.class)
                 .build();
-        timer.getJobDataMap().put("tag",tag);
-        timer.getJobDataMap().put("em", eventManager);
-        scheduler.scheduleJob(timer,trigger);
+        timerJob.getJobDataMap().put("tag",tag);
+        timerJob.getJobDataMap().put("em", eventManager);
+        scheduler.scheduleJob(timerJob,trigger);
         scheduler.start();
     }
 }

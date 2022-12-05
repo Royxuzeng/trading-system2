@@ -2,12 +2,6 @@ package algo;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import com.binance.api.client.domain.event.AggTradeEvent;
-import com.binance.api.client.domain.event.DepthEvent;
-
-import scheduling.ScheduleEvent;
-import source.CachedOrderBook;
-
 public class RiskWatcher {
     DescriptiveStatistics sma1;
     DescriptiveStatistics sma2;
@@ -50,12 +44,12 @@ public class RiskWatcher {
         }
     }
 
-    public void handleSma1Data() {
+    public void printSma1Data() {
         System.out.println("statistics of prices for sma1 are " +
                 sma1Data.toString());
     }
 
-    public void handleSma2Data() {
+    public void printSma2Data() {
         System.out.println("statistics of prices for sma2 are " +
                 sma2Data.toString());
     }

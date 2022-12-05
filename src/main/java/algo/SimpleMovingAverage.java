@@ -6,9 +6,6 @@ import java.util.Map;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.quartz.SchedulerException;
 
-import com.binance.api.client.domain.event.AggTradeEvent;
-import com.binance.api.client.domain.event.DepthEvent;
-
 import messaging.EventBroker;
 import messaging.EventManager;
 import scheduling.ScheduleEvent;
@@ -54,11 +51,16 @@ public class SimpleMovingAverage implements Runnable {
         computeSMA(scheduledEvent);
     }
 
+    // sma1 is descriptiveStatistics with a window size of 10.
+    // Each value is a weighted average computed from an orderbook.
+    // sma1Data  is descriptiveStatistics with a window size of 10.
+    // Each value is the mean of sma1. the most recent value is used to compare
+    // with sma2 to generate signal to buy or sell
     private void computeSMA(ScheduleEvent scheduledEvent) {
         String tag = scheduledEvent.getTag();
         if (count == 40) {
-            riskWatcher.handleSma1Data();
-            riskWatcher.handleSma2Data();
+            riskWatcher.printSma1Data();
+            riskWatcher.printSma2Data();
             count = 0;
         }
         if (cachedOrderBook == null) {
