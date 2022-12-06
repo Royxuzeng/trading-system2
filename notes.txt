@@ -19,8 +19,29 @@ computeSMA uses cachedOrderBook to update sma1 and sma1data
 computeSMA calls riskWatcher handleEvent to check if it needs to generate signal
 
 
-schedulerManager => eventManager => orderBookBroker and scheduleEventBroker
+schedulerManager, marketDataManager => eventManager => orderBookBroker and scheduleEventBroker
 
 
 sma1 is descriptiveStatistics with a window size of 10. Each value is a weighted average computed from an orderbook. 
-sma1Data  is descriptiveStatistics with a window size of 10. Each value is the mean of sma1. the most recent value is used to compare with sma2 to generate signal to buy or sell
+sma1Data  is descriptiveStatistics with a window size of 10. Each value is the mean of sma1. the most recent value is used to compare with sma2Data to generate signal to buy or sell
+
+
+OrderBook Flow
+
+Initialize MarketDataManager: main call MarketDataManager(symbol, eventManager), construtor in MarketDataManager calls new BinanceConnector(symbol) to initialize binance connector
+=>
+BinanceConnector initializeDepthCache creates BinanceApiRestClient, use the client to get an orderbook (limit 10) and store it in the orderbookCache in BinanceConnector
+
+
+MarketDataManager run calls BinanceConnector startDepthEventStreaming(symbol, eventManager)
+=>
+startDepthEventStreaming creates BinanceApiWebSocketClient (two-way interactive communication), client listens for changes in the order book for symbol, for each event received from the Binance servers it's going to update cached orderbook
+=>
+after updating cached orderbook in BinanceConnector, put the new orderbook to orderBookBroker's blocking queue
+
+
+SimpleMovingAverage run takes out one cachedOrderBook from orderBookEventBroker's blocking queue and calls handleEvent(cachedOrderBook)
+=> 
+put the orderbook into the variable cachedOrderBook in SimpleMovingAverage
+=>
+the orderbook will be used to compute moving average (refer to scheduleEvent flow)
