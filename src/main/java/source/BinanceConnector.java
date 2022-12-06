@@ -98,15 +98,15 @@ public class BinanceConnector {
     }
 
     private void updateOrderBook(NavigableMap<BigDecimal,
-            BigDecimal> lastOrderBookEntries, List<OrderBookEntry> orderBookDeltas) {
-        for (OrderBookEntry orderBookDelta : orderBookDeltas) {
-            BigDecimal price = new BigDecimal(orderBookDelta.getPrice());
-            BigDecimal qty = new BigDecimal(orderBookDelta.getQty());
+            BigDecimal> orderBookCache, List<OrderBookEntry> newOrderBook) {
+        for (OrderBookEntry newEntry : newOrderBook) {
+            BigDecimal price = new BigDecimal(newEntry.getPrice());
+            BigDecimal qty = new BigDecimal(newEntry.getQty());
             if (qty.compareTo(BigDecimal.ZERO) == 0) {
-                // qty=0 means remove this level
-                lastOrderBookEntries.remove(price);
+                // qty=0 means remove this entry
+                orderBookCache.remove(price);
             } else {
-                lastOrderBookEntries.put(price, qty);
+                orderBookCache.put(price, qty);
             }
         }
     }
