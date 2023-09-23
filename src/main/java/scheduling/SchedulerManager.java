@@ -12,7 +12,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import messaging.EventManager;
 
-//  responsible for scheduling the Timer jobs to run at specific intervals
+//  responsible for scheduling the job to run at specific intervals
 //  and publishing ScheduleEvent to the EventManager.
 public class SchedulerManager {
     private final EventManager eventManager;
