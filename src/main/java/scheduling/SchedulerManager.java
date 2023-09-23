@@ -29,7 +29,7 @@ public class SchedulerManager {
     // ScheduledEventPublisherJob defines how often computeSMA is called
     // Schedules the Timer jobs to run at specified intervals
     // and sets up the tag and EventManager instance for each job.
-    public void periodicCallBack(int intervalMillis, String tag) throws SchedulerException {
+    public void scheduleEventPublisherJobWithInterval(int intervalMillis, String tag) throws SchedulerException {
         // A Trigger object is used to define the schedule at which a job will be executed.
         Trigger trigger = TriggerBuilder.newTrigger()
                 .startNow()  //Specifies that the trigger should start immediately.

@@ -22,8 +22,8 @@ public class SimpleMovingAverage implements Runnable {
     public EventManager eventManager;
     public SchedulerManager schedulerManager;
     public CachedOrderBook cachedOrderBook = null;
-    public int interval1;
-    public int interval2;
+    public int shortEventPublishIntervalMillis;
+    public int longEventPublishIntervalMillis;
     public int shortTermWindow;
     public int longTermWindow;
     public RiskWatcher riskWatcher;
@@ -37,11 +37,11 @@ public class SimpleMovingAverage implements Runnable {
 
 
     // interval used in trigger interval in periodic callback
-    public SimpleMovingAverage(int interval1, int interval2, EventManager eventManager,
+    public SimpleMovingAverage(int shortScheduledEventIntervalMillis, int longEventPublishIntervalMillis, EventManager eventManager,
                                SchedulerManager schedulerManager,
                                int shortTermWindow, int longTermWindow) {
-        this.interval1 = interval1;
-        this.interval2 = interval2;
+        this.shortEventPublishIntervalMillis = shortScheduledEventIntervalMillis;
+        this.longEventPublishIntervalMillis = longEventPublishIntervalMillis;
 
         // the window size represents the number of data points (or values)
         // that the instance will hold and use for statistical calculations.
@@ -126,8 +126,8 @@ public class SimpleMovingAverage implements Runnable {
     @Override
     public void run() {
         try {
-            this.schedulerManager.periodicCallBack(interval1, "sma1");
-            this.schedulerManager.periodicCallBack(interval2, "sma2");
+            this.schedulerManager.scheduleEventPublisherJobWithInterval(shortEventPublishIntervalMillis, "sma1");
+            this.schedulerManager.scheduleEventPublisherJobWithInterval(longEventPublishIntervalMillis, "sma2");
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
