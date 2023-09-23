@@ -1,56 +1,54 @@
 package algo;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 public class RiskWatcher {
-    DescriptiveStatistics sma1;
-    DescriptiveStatistics sma2;
-    public DescriptiveStatistics sma1Data;
-    public DescriptiveStatistics sma2Data;
+
     private final int SMA1LARGER = 1;
     private final int SMA2LARGER = 0;
     private int state;
 
-    public RiskWatcher(DescriptiveStatistics sma1, DescriptiveStatistics sma2) {
-        this.sma1 = sma1;
-        this.sma2 = sma2;
-        this.sma1Data = new DescriptiveStatistics(10);
-        this.sma2Data = new DescriptiveStatistics(20);
+    public RiskWatcher() {
         this.state = -1;
     }
 
 
-    public void handleEvent(double sma1Value, double sma2Value) {
-        if (sma1Value == 0 || sma2Value == 0) {
-            return;
-        } else {
-            int state1 = -1;
-            if (sma1Value > sma2Value) {
-                state1 = SMA1LARGER;
-            } else {
-                state1 = SMA2LARGER;
-            }
+    /**
+     * Analyzes and compares the short-term and long-term moving averages
+     * to determine whether to issue a buy or sell signal.
+     *
+     * @param sma1Value - the value of the short-term moving average.
+     * @param sma2Value - the value of the long-term moving average.
+     */
+    public void analyzeAndIssueSignal(double sma1Value, double sma2Value) {
+        if (sma1Value != 0 && sma2Value != 0) {
+            int newState = determineState(sma1Value, sma2Value);
 
-            if (state != state1) {
-                if (state1 == SMA1LARGER) {
-                    System.out.println("The short term moving average crosses above the " +
-                            "long term moving average, this indicates a buy signal.");
-                } else {
-                    System.out.println("The short term moving average crosses below the " +
-                            "long term moving average, it may be a good moment to sell.");
-                }
-                state = state1;
+            if (state != newState) {
+                emitSignal(newState);
+                state = newState;
             }
         }
     }
 
-    public void printSma1Data() {
-        System.out.println("statistics of prices for sma1 are " +
-                sma1Data.toString());
+    /**
+     * Determines the state based on the comparison of short-term and long-term moving averages.
+     *
+     * @param sma1Value - the value of the short-term moving average.
+     * @param sma2Value - the value of the long-term moving average.
+     * @return - the determined state.
+     */
+    private int determineState(double sma1Value, double sma2Value) {
+        return sma1Value > sma2Value ? SMA1LARGER : SMA2LARGER;
     }
 
-    public void printSma2Data() {
-        System.out.println("statistics of prices for sma2 are " +
-                sma2Data.toString());
+    /**
+     * Emits the buy or sell signal based on the state.
+     *
+     * @param newState - the state determining the type of signal to be emitted.
+     */
+    private void emitSignal(int newState) {
+        String signalMessage = newState == SMA1LARGER
+                ? "The short term moving average crosses above the long term moving average, this indicates a buy signal."
+                : "The short term moving average crosses below the long term moving average, it may be a good moment to sell.";
+        System.out.println(signalMessage);
     }
 }

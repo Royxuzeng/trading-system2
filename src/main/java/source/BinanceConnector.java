@@ -23,7 +23,6 @@ import messaging.EventManager;
 public class BinanceConnector {
 
     private long orderBookLastUpdateId;
-
     private CachedOrderBook orderBookCache;
 
     public BinanceConnector(String symbol) throws IOException {

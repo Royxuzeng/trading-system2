@@ -2,11 +2,12 @@ package scheduling;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import messaging.EventManager;
 
-public class Timer implements Job {
+// implements the Job interface and is responsible for executing the job’s logic
+// when triggered by the Scheduler.
+public class ScheduledEventPublisherJob implements Job {
 
     public void execute(JobExecutionContext arg0) {
         EventManager em = (EventManager) arg0.getJobDetail().getJobDataMap().get("em");
