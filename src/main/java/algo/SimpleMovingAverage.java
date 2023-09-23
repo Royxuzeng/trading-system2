@@ -1,5 +1,5 @@
 package algo;
-a
+
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -59,11 +59,11 @@ public class SimpleMovingAverage implements Runnable {
         this.sma2Data = new DescriptiveStatistics(10);
     }
 
-    public void handleEvent(CachedOrderBook orderBook) {
+    public void updateOrderBookCache(CachedOrderBook orderBook) {
         cachedOrderBook = orderBook;
     }
 
-    public void handleEvent(ScheduleEvent scheduledEvent) {
+    public void computeScheduledSMA(ScheduleEvent scheduledEvent) {
         computeSMA(scheduledEvent);
     }
 
@@ -79,8 +79,8 @@ public class SimpleMovingAverage implements Runnable {
         // method has been called to compute the Simple Moving Averages (SMA) since the last print
         // of the SMA data.
         if (count == 40) {
-            System.out.println("Statistics summary of prices for sma1: " + sma1Data.toString();
-            System.out.println("Statistics summary of prices for sma1: " + sma2Data.toString();
+            System.out.println("Statistics summary of prices for sma1: " + sma1Data.toString());
+            System.out.println("Statistics summary of prices for sma2: " + sma2Data.toString());
             count = 0;
         }
         if (cachedOrderBook == null) {
@@ -136,8 +136,8 @@ public class SimpleMovingAverage implements Runnable {
         EventBroker scheduledEventBroker = this.eventManager.getScheduledEventEventBroker();
         while (true) {
             try {
-                handleEvent((CachedOrderBook) orderBookEventBroker.takeEvent());
-                handleEvent((ScheduleEvent) scheduledEventBroker.takeEvent());
+                updateOrderBookCache((CachedOrderBook) orderBookEventBroker.takeEvent());
+                computeScheduledSMA((ScheduleEvent) scheduledEventBroker.takeEvent());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
