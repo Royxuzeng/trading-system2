@@ -66,9 +66,7 @@ public class BinanceConnector {
 
         // Listen for changes in the order book for symbol, eg.ETH/BTC
         // second arg is called for each event received from the Binance servers
-        System.out.println("here");
         client.onDepthEvent(symbol.toLowerCase(), response -> {
-            System.out.println("Got change");
             if (response.getFinalUpdateId() > orderBookLastUpdateId) {
                 orderBookLastUpdateId = response.getFinalUpdateId();
                 updateOrderBook(orderBookCache.getAsks(), response.getAsks());
