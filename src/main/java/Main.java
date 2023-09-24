@@ -1,27 +1,35 @@
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.quartz.SchedulerException;
 
-import algo.SimpleMovingAverage;
+import algo.SMAComputeTask;
 import messaging.EventManager;
 import scheduling.SchedulerManager;
-import source.MarketDataManager;
+import source.MarketDataStreamingTask;
 
 public class Main {
     public static void main(String args[]) throws SchedulerException, IOException {
         EventManager eventManager = new EventManager();
-        MarketDataManager marketDataManager = new MarketDataManager("ETHBTC", eventManager);
+        MarketDataStreamingTask marketDataStreamingTask = new MarketDataStreamingTask("ETHBTC", eventManager);
         SchedulerManager schedulerManager = new SchedulerManager(eventManager);
-        SimpleMovingAverage sma = new SimpleMovingAverage(500, 500, eventManager,
-                                    schedulerManager, 10, 20);
+        SMAComputeTask smaComputeTask = new SMAComputeTask(eventManager, schedulerManager, 10, 20);
 
         // 2 tasks
-        // marketDataManager gets order book from binance and puts it into blocking queue
+        // marketDataStreamingTask gets order book from binance and puts it into blocking queue
         // sma takes order book from blocking queue
-        ScheduledExecutorService eS = Executors.newScheduledThreadPool(2);
-        eS.execute(marketDataManager);
-        eS.execute(sma);
+        ExecutorService eS = Executors.newFixedThreadPool(2);
+        eS.execute(marketDataStreamingTask);
+        eS.execute(smaComputeTask);
+
+
+        try {
+            schedulerManager.scheduleEventPublisherJobWithInterval(500, "sma1");
+            schedulerManager.scheduleEventPublisherJobWithInterval(500, "sma2");
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
     }
+
 }

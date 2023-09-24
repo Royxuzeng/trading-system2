@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.quartz.SchedulerException;
 
 import messaging.EventBroker;
 import messaging.EventManager;
@@ -12,7 +11,7 @@ import scheduling.ScheduleEvent;
 import scheduling.SchedulerManager;
 import source.CachedOrderBook;
 
-public class SimpleMovingAverage implements Runnable {
+public class SMAComputeTask implements Runnable {
     // stores the weighted average price data points.
     // Its mean value represents the short-term simple moving average at any point in time.
     public DescriptiveStatistics sma1;
@@ -22,8 +21,6 @@ public class SimpleMovingAverage implements Runnable {
     public EventManager eventManager;
     public SchedulerManager schedulerManager;
     public CachedOrderBook cachedOrderBook = null;
-    public int shortEventPublishIntervalMillis;
-    public int longEventPublishIntervalMillis;
     public int shortTermWindow;
     public int longTermWindow;
     public RiskWatcher riskWatcher;
@@ -37,11 +34,9 @@ public class SimpleMovingAverage implements Runnable {
 
 
     // interval used in trigger interval in periodic callback
-    public SimpleMovingAverage(int shortScheduledEventIntervalMillis, int longEventPublishIntervalMillis, EventManager eventManager,
-                               SchedulerManager schedulerManager,
-                               int shortTermWindow, int longTermWindow) {
-        this.shortEventPublishIntervalMillis = shortScheduledEventIntervalMillis;
-        this.longEventPublishIntervalMillis = longEventPublishIntervalMillis;
+    public SMAComputeTask(EventManager eventManager,
+                          SchedulerManager schedulerManager,
+                          int shortTermWindow, int longTermWindow) {
 
         // the window size represents the number of data points (or values)
         // that the instance will hold and use for statistical calculations.
@@ -63,16 +58,12 @@ public class SimpleMovingAverage implements Runnable {
         cachedOrderBook = orderBook;
     }
 
-    public void computeScheduledSMA(ScheduleEvent scheduledEvent) {
-        computeSMA(scheduledEvent);
-    }
-
     // sma1 is descriptiveStatistics with a window size of 10.
     // Each value is a weighted average computed from an orderbook.
     // sma1Data  is descriptiveStatistics with a window size of 10.
     // Each value is the mean of sma1. the most recent value is used to compare
     // with sma2 to generate signal to buy or sell
-    private void computeSMA(ScheduleEvent scheduledEvent) {
+    private void computeScheduledSMA(ScheduleEvent scheduledEvent) {
         String tag = scheduledEvent.getSmaTypeTag();
 
         // The count variable is acting as a counter for the number of times the computeSMA
@@ -125,13 +116,6 @@ public class SimpleMovingAverage implements Runnable {
 
     @Override
     public void run() {
-        try {
-            this.schedulerManager.scheduleEventPublisherJobWithInterval(shortEventPublishIntervalMillis, "sma1");
-            this.schedulerManager.scheduleEventPublisherJobWithInterval(longEventPublishIntervalMillis, "sma2");
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-
         EventBroker orderBookEventBroker = this.eventManager.getOrderBookEventBroker();
         EventBroker scheduledEventBroker = this.eventManager.getScheduledEventEventBroker();
         while (true) {

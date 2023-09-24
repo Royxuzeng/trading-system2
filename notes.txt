@@ -19,7 +19,7 @@ computeSMA uses cachedOrderBook to update sma1 and sma1data
 computeSMA calls riskWatcher handleEvent to check if it needs to generate signal
 
 
-schedulerManager, marketDataManager => eventManager => orderBookBroker and scheduleEventBroker
+schedulerManager, marketDataStreamingTask => eventManager => orderBookBroker and scheduleEventBroker
 
 
 sma1 is descriptiveStatistics with a window size of 10. Each value is a weighted average computed from an orderbook. 
